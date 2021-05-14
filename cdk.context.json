@@ -1,0 +1,40 @@
+{
+  "vpc-provider:account=395824177941:filter.isDefault=true:region=ap-northeast-2:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-9eb904f5",
+    "vpcCidrBlock": "172.31.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-3063cc5b",
+            "cidr": "172.31.0.0/20",
+            "availabilityZone": "ap-northeast-2a",
+            "routeTableId": "rtb-892a50e2"
+          },
+          {
+            "subnetId": "subnet-c154ccba",
+            "cidr": "172.31.16.0/20",
+            "availabilityZone": "ap-northeast-2b",
+            "routeTableId": "rtb-892a50e2"
+          },
+          {
+            "subnetId": "subnet-50cad91c",
+            "cidr": "172.31.32.0/20",
+            "availabilityZone": "ap-northeast-2c",
+            "routeTableId": "rtb-892a50e2"
+          },
+          {
+            "subnetId": "subnet-66826e39",
+            "cidr": "172.31.48.0/20",
+            "availabilityZone": "ap-northeast-2d",
+            "routeTableId": "rtb-892a50e2"
+          }
+        ]
+      }
+    ]
+  },
+  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-managementServer-v1:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-0c5429cd5d98901ad"
+}

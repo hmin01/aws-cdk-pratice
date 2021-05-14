@@ -1,0 +1,9 @@
+{
+  "environment": {
+    "BLOCK_SIZE": "100000",
+    "DSN":"admin:qlalfqjsgh@tcp(gdpr.clqljxpelmpr.ap-northeast-2.rds.amazonaws.com:3306)/privacyDAM",
+    "OPA_HOST":"http://13.125.111.54:4001"
+  },
+  "memory":512,
+  "timeout":900
+}
