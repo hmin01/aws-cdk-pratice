@@ -96,7 +96,7 @@ function createEC2Instance(scope: Construct): ec2.Instance {
 
     // Set the AMI properties
     const amiProps = {
-      name: 'privacyDAM-managementServer-v1.1',
+      name: 'privacyDAM-ManagementServer-v1.1',
       owners: ['395824177941'],
     };
     // Set the ec2 instance properties
@@ -115,7 +115,7 @@ function createEC2Instance(scope: Construct): ec2.Instance {
     };
     // Finally elts provision our ec2 instance
     const instance = new ec2.Instance(scope, NameSet.NAME_EC2, instanceProps);
-    
+
     // Set security group for connect related database
     const securityGroupForPrivacyDAM = createEC2SecurityGroupToConnection(scope, defaultVpc);
     instance.addSecurityGroup(securityGroupForPrivacyDAM);
