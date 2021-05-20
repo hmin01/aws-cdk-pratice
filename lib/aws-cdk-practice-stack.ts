@@ -115,8 +115,30 @@ function createEC2Instance(scope: Construct): ec2.Instance {
     };
     // Finally elts provision our ec2 instance
     const instance = new ec2.Instance(scope, NameSet.NAME_EC2, instanceProps);
+    // Set security group for connect related database
+    instance.addSecurityGroup(createEC2SecurityGroupForPrivacyDAM(scope, defaultVpc));
+
     console.log('[Notice] Create an aws ec2 instance');
     return instance;
+  } catch (err) {
+    console.error(err);
+    process.exit(0);
+  }
+}
+
+function createEC2SecurityGroupForPrivacyDAM(scope: Construct, vpc: ec2.IVpc): ec2.SecurityGroup {
+  // Set the security group properties
+  const props = {
+    vpc: vpc,
+    allowAllOutbound: true,
+    securityGroupName: NameSet.NAME_EC2_SECURITY_GROUP_DB
+  };
+
+  try {
+    // Create basic security group
+    const securityGroup = new ec2.SecurityGroup(scope, NameSet.NAME_EC2_SECURITY_GROUP_DB, props);
+    // Return
+    return securityGroup;
   } catch (err) {
     console.error(err);
     process.exit(0);
@@ -128,12 +150,12 @@ function createEC2SecurityGroup(scope: Construct, vpc: ec2.IVpc): ec2.SecurityGr
   const props = {
     vpc: vpc,
     allowAllOutbound: true,
-    securityGroupName: NameSet.NAME_EC2_SECURITY_GROUP
+    securityGroupName: NameSet.NAME_EC2_SECURITY_GROUP_BASIC
   };
 
-  // Create security group
   try {
-    const securityGroup = new ec2.SecurityGroup(scope, NameSet.NAME_EC2_SECURITY_GROUP, props);
+    // Create basic security group
+    const securityGroup = new ec2.SecurityGroup(scope, NameSet.NAME_EC2_SECURITY_GROUP_BASIC, props);
     // Set spectific port to allow inbound traffic
     securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(22), 'Allow SSH access from internet [using privacyDAM]');
     securityGroup.addIngressRule(ec2.Peer.anyIpv4(), ec2.Port.tcp(3306), 'Allow Mysql(port 3306) access from internet [using privacyDAM]');
