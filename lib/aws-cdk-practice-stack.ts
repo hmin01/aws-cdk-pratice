@@ -1,7 +1,6 @@
 import { Construct } from 'constructs';
-import { Stack, StackProps, Duration } from 'aws-cdk-lib';
+import { Stack, StackProps, Duration, CfnOutput, Token } from 'aws-cdk-lib';
 import { aws_iam as iam, aws_ec2 as ec2, aws_lambda as lambda, aws_apigateway as apigateway } from 'aws-cdk-lib';
-import { IAMClient, GetRoleCommand } from '@aws-sdk/client-iam';
 
 import * as NameSet from '../model/nameset';
 import * as AwsRole from '../util/role';
@@ -14,16 +13,21 @@ export class AwsCdkPracticeStack extends Stack {
     super(scope, id, props);
 
     // Create ec2 instance
-    const instancePublicIP = createEC2Instance(this);
+    const instance = createEC2Instance(this);
+    // // Create eip and associate with instance
+    // const eip = createElasticIpAddress(this, instance);
     
-    // // Load a lambda config data
-    // const file = fs.readFileSync(path.join(__dirname, '../lambda-config.json'));
-    // const config = JSON.parse(file.toString());
-    // // Create Role for lambda function
-    // const fn = createLambdaFunction(this, config);
+    // Load a lambda config data
+    const file = fs.readFileSync(path.join(__dirname, '../config/lambda-setting.json'));
+    const config = JSON.parse(file.toString());
+    // Set lambda environment (OPA host and management server using internal database)
+    config.environment.DSN = `privacyDAM_admin:qlalfqjsgh@tcp(${Token.asString(instance.instancePublicIp)}:3306)/privacyDAM`;
+    config.environment.OPA = `http://${Token.asString(instance.instancePublicIp)}/authentication/user`;
+    // Create Role for lambda function
+    const fn = createLambdaFunction(this, config);
 
-    // // Create apigateway
-    // createApiGateway(this, fn);
+    // Create apigateway
+    createApiGateway(this, fn);
   }
 }
 
@@ -47,7 +51,7 @@ function createLambdaFunction(scope: Construct, config:any): lambda.Function {
 
     // Create lambda
     const fn = new lambda.Function(scope, NameSet.NAME_LAMBDA, props);
-    console.log('[Notice] Create AWS Lambda function');
+    console.log('[Notice] Create an aws lambda function');
     return fn;
   } catch (err) {
     console.error(err);
@@ -76,7 +80,7 @@ function createApiGateway(scope: Construct, fn: lambda.Function) {
   processRouter.addMethod('GET', integration);
 }
 
-function createEC2Instance(scope: Construct): string {
+function createEC2Instance(scope: Construct): ec2.Instance {
   try {
     // Get the default VPC. This is the network where your instance will be provisioned
     // All activated region in AWS have a default VPC.
@@ -84,17 +88,15 @@ function createEC2Instance(scope: Construct): string {
     // Get the subnet
     const subnet = defaultVpc.publicSubnets[0];
 
-    // Lets create a role for the instance
-    // You can attach permissions to a role and determine what your instance can or can not do
+    // Create a role for the instance
     const role = AwsRole.createEC2InstanceRole(scope);
 
-    // Lets create a security group for our instance
-    // A security group acts as a virtual firewall for your instance to control inbound and outbound traffic.
+    // Create a security group for the instance
     const securityGroup = createEC2SecurityGroup(scope, defaultVpc);
 
     // Set the AMI properties
     const amiProps = {
-      name: 'privacyDAM-managementServer-v1',
+      name: 'privacyDAM-managementServer-v1.1',
       owners: ['395824177941'],
     };
     // Set the ec2 instance properties
@@ -106,15 +108,15 @@ function createEC2Instance(scope: Construct): string {
       instanceType: ec2.InstanceType.of(ec2.InstanceClass.T2, ec2.InstanceSize.MICRO),
       machineImage: ec2.MachineImage.lookup(amiProps),
       keyName: 'tov_hmin',
-      userData: createUserData(),
+      userData: loadUserData(),
       vpcSubnets: {
         subnets: [subnet]
       }
     };
     // Finally elts provision our ec2 instance
     const instance = new ec2.Instance(scope, NameSet.NAME_EC2, instanceProps);
-    console.log(instance.instancePublicDnsName.toString());
-    return instance.instancePublicIp;
+    console.log('[Notice] Create an aws ec2 instance');
+    return instance;
   } catch (err) {
     console.error(err);
     process.exit(0);
@@ -145,10 +147,38 @@ function createEC2SecurityGroup(scope: Construct, vpc: ec2.IVpc): ec2.SecurityGr
   }
 }
 
-function createUserData(): ec2.UserData {
-  // Load user data
-  const data = fs.readFileSync(path.join(__dirname, '../userdata.txt'));
+function createElasticIpAddress(scope: Construct, instance: ec2.Instance): ec2.CfnEIP {
+  try {
+    // Set the elastic ip properties
+    const eipProps = {
+      tags: [{key: 'Name', value: NameSet.NAME_EC2_EIP}]
+    };
+    // Create elastic ip address
+    const eip = new ec2.CfnEIP(scope, NameSet.NAME_EC2_EIP, eipProps);
 
+    // Set the association properties
+    const associationProps = {
+      associationId: NameSet.NAME_EC2_EIP_AS,
+      eip: eip.ref,
+      instanceId: instance.instanceId
+    };
+    // associate elastic ip
+    const as = new ec2.CfnEIPAssociation(scope, NameSet.NAME_EC2_EIP_AS, associationProps);
+    return eip;
+  } catch (err) {
+    console.error(err);
+    process.exit(0);
+  }
+}
+
+function loadUserData(): ec2.UserData {
+  // Load user data (basic option)
+  const cloudInitOption = fs.readFileSync(path.join(__dirname, '../config/userdata-cloud-init'));
+  // Load user data
+  const data = fs.readFileSync(path.join(__dirname, '../config/userdata.txt'));
+
+  // Conbime user data
+  const userData = Buffer.concat([cloudInitOption, data]);
   // Create user data
-  return ec2.UserData.custom(data.toString());
+  return ec2.UserData.custom(userData.toString());
 }

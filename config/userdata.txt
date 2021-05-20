@@ -1,0 +1,7 @@
+#!/bin/bash
+sudo systemctl start mysql
+cd /usr/local/etc/privacyDAM/
+sudo ./privacyDAM &
+cd /usr/local/etc/temperaryOPA/
+sudo ./temp-opa-server &
+--//
