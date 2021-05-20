@@ -36,6 +36,5 @@
       }
     ]
   },
-  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-managementServer-v1:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-0c5429cd5d98901ad",
-  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-managementServer-v1.1:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-0702b787f4c0a9ff7"
+  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-ManagementServer-v1.1:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-01c862cf3d99c1808"
 }
