@@ -115,8 +115,12 @@ function createEC2Instance(scope: Construct): ec2.Instance {
     };
     // Finally elts provision our ec2 instance
     const instance = new ec2.Instance(scope, NameSet.NAME_EC2, instanceProps);
+    
     // Set security group for connect related database
-    instance.addSecurityGroup(createEC2SecurityGroupForPrivacyDAM(scope, defaultVpc));
+    const securityGroupForPrivacyDAM = createEC2SecurityGroupToConnection(scope, defaultVpc);
+    instance.addSecurityGroup(securityGroupForPrivacyDAM);
+    // Create security group for external database to allow access from privacyDAM
+    createEC2SecurityGroupToAllow(scope, defaultVpc, securityGroupForPrivacyDAM);
 
     console.log('[Notice] Create an aws ec2 instance');
     return instance;
@@ -126,17 +130,38 @@ function createEC2Instance(scope: Construct): ec2.Instance {
   }
 }
 
-function createEC2SecurityGroupForPrivacyDAM(scope: Construct, vpc: ec2.IVpc): ec2.SecurityGroup {
+function createEC2SecurityGroupToConnection(scope: Construct, vpc: ec2.IVpc): ec2.SecurityGroup {
   // Set the security group properties
   const props = {
     vpc: vpc,
     allowAllOutbound: true,
-    securityGroupName: NameSet.NAME_EC2_SECURITY_GROUP_DB
+    securityGroupName: NameSet.NAME_EC2_SECURITY_GROUP_TO_CONN
   };
 
   try {
     // Create basic security group
-    const securityGroup = new ec2.SecurityGroup(scope, NameSet.NAME_EC2_SECURITY_GROUP_DB, props);
+    const securityGroup = new ec2.SecurityGroup(scope, NameSet.NAME_EC2_SECURITY_GROUP_TO_CONN, props);
+    // Return
+    return securityGroup;
+  } catch (err) {
+    console.error(err);
+    process.exit(0);
+  }
+}
+
+function createEC2SecurityGroupToAllow(scope: Construct, vpc: ec2.IVpc, incomingSecurityGroup: ec2.SecurityGroup): ec2.SecurityGroup {
+  // Set the security group properties
+  const props = {
+    vpc: vpc,
+    allowAllOutbound: true,
+    securityGroupName: NameSet.NAME_EC2_SECURITY_GROUP_TO_ALLOW
+  };
+
+  try {
+    // Create basic security group
+    const securityGroup = new ec2.SecurityGroup(scope, NameSet.NAME_EC2_SECURITY_GROUP_TO_ALLOW, props);
+    // Set spectific port to allow inbound traffic
+    securityGroup.addIngressRule(incomingSecurityGroup, ec2.Port.tcp(3306), 'Allow Mysql(port) access from PrivacyDAM');
     // Return
     return securityGroup;
   } catch (err) {
