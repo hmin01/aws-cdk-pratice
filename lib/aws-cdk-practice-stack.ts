@@ -110,7 +110,7 @@ function createEC2Instance(scope: Construct, vpc: ec2.IVpc, incomingSecurityGrou
 
     // Set the AMI properties
     const amiProps = {
-      name: 'privacyDAM-ManagementServer-v1.1',
+      name: 'privacyDAM-ManagementServer-v1.2',
       owners: ['395824177941'],
     };
     // Set the ec2 instance properties
