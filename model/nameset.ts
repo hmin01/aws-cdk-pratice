@@ -10,3 +10,4 @@ export const NAME_EC2_SECURITY_GROUP_BASIC    = 'privacyDAM-BasicSecurityGroup';
 export const NAME_EC2_EIP                     = 'privacyDAM-EIP';
 export const NAME_EC2_EIP_AS                  = 'privacyDAM-EIP-Association';
 export const NAME_APIGATEWAY                  = 'privacyDAM-APIs';
+export const NAME_APIGATEWAY_STAGE            = 'pdam';
