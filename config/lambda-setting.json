@@ -1,7 +1,0 @@
-{
-  "environment": {
-    "BLOCK_SIZE": "100000"
-  },
-  "memory":512,
-  "timeout":900
-}

@@ -37,5 +37,57 @@
     ]
   },
   "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-ManagementServer-v1.1:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-01c862cf3d99c1808",
-  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-ManagementServer-v1.2:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-0eb07310eb1891f4a"
+  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-ManagementServer-v1.2:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-0eb07310eb1891f4a",
+  "vpc-provider:account=395824177941:filter.vpc-id=vpc-9eb904f5:region=ap-northeast-2:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-9eb904f5",
+    "vpcCidrBlock": "172.31.0.0/16",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "Public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-3063cc5b",
+            "cidr": "172.31.0.0/20",
+            "availabilityZone": "ap-northeast-2a",
+            "routeTableId": "rtb-892a50e2"
+          },
+          {
+            "subnetId": "subnet-c154ccba",
+            "cidr": "172.31.16.0/20",
+            "availabilityZone": "ap-northeast-2b",
+            "routeTableId": "rtb-892a50e2"
+          },
+          {
+            "subnetId": "subnet-50cad91c",
+            "cidr": "172.31.32.0/20",
+            "availabilityZone": "ap-northeast-2c",
+            "routeTableId": "rtb-892a50e2"
+          },
+          {
+            "subnetId": "subnet-66826e39",
+            "cidr": "172.31.48.0/20",
+            "availabilityZone": "ap-northeast-2d",
+            "routeTableId": "rtb-892a50e2"
+          }
+        ]
+      },
+      {
+        "name": "Private",
+        "type": "Private",
+        "subnets": [
+          {
+            "subnetId": "subnet-05c11a9b92f2198dd",
+            "cidr": "172.31.64.0/20",
+            "availabilityZone": "ap-northeast-2a",
+            "routeTableId": "rtb-0aed839877cd33428"
+          }
+        ]
+      }
+    ]
+  },
+  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-Server-v1.0:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-023c06bccdf4573ab",
+  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacydam-server-t-v1.0:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-0610aa1b6d08ade66",
+  "ami:account=395824177941:filters.image-type.0=machine:filters.name.0=privacyDAM-Server-t-v1.0:filters.state.0=available:owners.0=395824177941:region=ap-northeast-2": "ami-05fc43baddd0a9320"
 }

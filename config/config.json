@@ -1,0 +1,33 @@
+{
+  "ec2":{
+    "image":{
+      "name":"privacyDAM-Server-t-v1.0",
+      "owner":"395824177941"
+    },
+    "keyName":"tov_hmin"
+  },
+  "ecs":{
+    "config":{
+      "cpu":512,
+      "memory":1024,
+      "portMappings":[{
+        "containerPort":4000,
+        "hostPort":4000
+      }]
+    }
+  },
+  "lambda":{
+    "environment":{
+      "DURATION":"5"
+    },
+    "memory":256,
+    "timeout":120
+  },
+  "opa":{
+    "uri":""
+  },
+  "vpc":{
+    "privateSubnets":["subnet-05c11a9b92f2198dd"],
+    "publicSubnets":["subnet-3063cc5b"]
+  }
+}
